@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -72,7 +70,6 @@ public class ReverseGeoLookupService {
         } else {
             String formatted_address = lookupFirstFormattedAddress(latlong);
 
-//            String time = new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(new Date(System.currentTimeMillis()));
             String time = new Date(System.currentTimeMillis()).toString();
             String[] values = {formatted_address, time};
 

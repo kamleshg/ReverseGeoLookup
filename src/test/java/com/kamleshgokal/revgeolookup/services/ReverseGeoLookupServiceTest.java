@@ -4,12 +4,8 @@ import com.kamleshgokal.revgeolookup.ReverseGeoLookupApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
@@ -39,7 +35,7 @@ public class ReverseGeoLookupServiceTest {
     public void lookupFirstAddress() {
         String value = null;
         try {
-            value = service.lookupFirstFormattedAddress("40.714224,-73.961452");
+            value = service.cachedLookupFirstFormattedAddress("40.714224,-73.961452");
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -50,7 +46,7 @@ public class ReverseGeoLookupServiceTest {
     public void lookupInvalidAddress() {
         String value = null;
         try {
-            value = service.lookupFirstFormattedAddress("0,0");
+            value = service.cachedLookupFirstFormattedAddress("0,0");
         } catch (Exception e) {
             fail(e.getMessage());
         }

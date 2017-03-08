@@ -4,7 +4,6 @@ package com.kamleshgokal.revgeolookup.controller;
  * Created by kgokal on 3/7/17.
  */
 
-import com.kamleshgokal.revgeolookup.GlobalProperties;
 import com.kamleshgokal.revgeolookup.exceptions.ReverseGeoLookupException;
 import com.kamleshgokal.revgeolookup.services.ReverseGeoLookupService;
 import org.slf4j.Logger;

@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by kgokal on 3/7/17.
@@ -24,7 +27,7 @@ public class ReverseGeoLookupService {
     @Autowired
     GlobalProperties props;
 
-    private static Cache<String, String> cache = new Cache<>(10, -1);
+    private static Cache<String, String[]> cache = new Cache<>(10, -1);
 
     public String lookup(String latlong) throws ReverseGeoLookupException {
         String URL = props.getApiUrl()
@@ -65,19 +68,27 @@ public class ReverseGeoLookupService {
     public String cachedLookupFirstFormattedAddress(String latlong) throws ReverseGeoLookupException {
         if (cache.containsKey(latlong)) {
             LOGGER.debug("Cached item: " + latlong);
-            return cache.get(latlong);
+            return cache.get(latlong)[0];
         } else {
             String formatted_address = lookupFirstFormattedAddress(latlong);
-            cache.put(latlong, formatted_address);
+
+//            String time = new SimpleDateFormat("dd/MM/yy HH:mm:ss").format(new Date(System.currentTimeMillis()));
+            String time = new Date(System.currentTimeMillis()).toString();
+            String[] values = {formatted_address, time};
+
+            cache.put(latlong, values);
             return formatted_address;
         }
     }
 
     public String viewCache() {
-        String cacheContents = "Cache Contents: \n";
+        String cacheContents = "{\"Cache Contents\": [\n";
         for(String curr: cache.keySet()) {
-            cacheContents += curr + ": " + cache.get(curr) + "\n";
+            String address = cache.get(curr)[0];
+            String time = cache.get(curr)[1];
+            cacheContents += "{\"latlng\":\"" + curr + "\",\"address\":\"" + address + "\",\"time\":\"" + time + "\"},\n";
         }
-        return cacheContents;
+        cacheContents = cacheContents.replaceAll(",$", "");//Strip last comma
+        return cacheContents + "]}";
     }
 }

@@ -37,28 +37,42 @@ public class ReverseGeoLookupControllerTest {
     public void getLookupWithOutLatlong() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/lookup").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(content().string(equalTo("Missing required LatLong parameter!")));
+                .andExpect(content().string(containsString("Missing required LatLong parameter!")));
     }
 
     @Test
     public void getValidLookup1() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/lookup?latlong=40.714224,-73.961452").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("277 Bedford Ave, Brooklyn, NY 11211, USA")));
+                .andExpect(content().string(containsString("277 Bedford Ave, Brooklyn, NY 11211, USA")));
     }
 
     @Test
     public void getValidLookup2() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/lookup?latlong=34.070157,-84.333572").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("914-920 Upper Hembree Rd, Roswell, GA 30076, USA")));
+                .andExpect(content().string(containsString("914-920 Upper Hembree Rd, Roswell, GA 30076, USA")));
     }
 
     @Test
     public void getWithBadLatLong() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/lookup?latlong=34.070157, -84.333572").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is5xxServerError())
-                .andExpect(content().string(containsString("Exception: Server returned HTTP response code: 400 for URL:")));
+        mvc.perform(MockMvcRequestBuilders.get("/lookup?latlong=134.070157").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string(containsString("Expected 2 values.")));
+    }
+
+    @Test
+    public void getWithBadLat() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/lookup?latlong=134.070157,-84.333572").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string(containsString("Latitude is invalid format")));
+    }
+
+    @Test
+    public void getWithBadLong() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/lookup?latlong=34.070157,-184.333572").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string(containsString("Longitude is invalid format")));
     }
 
     @Test
